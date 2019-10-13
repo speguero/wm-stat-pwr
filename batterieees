@@ -124,11 +124,10 @@ else:
 
 battery_overall_percentage = int(sum(battery_percentage) / len(battery_percentage))
 blocklet_indicator         = get_blocklet_indicator(battery_status, battery_overall_percentage, blocklet_style)
+blocklet_text              = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
 
-blocklet_text = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
-
-print(blocklet_text)
-print(get_blocklet_text_color(battery_overall_percentage))
+print(blocklet_text)                                       # Example Output: "B FUL 100%\n"
+print(get_blocklet_text_color(battery_overall_percentage)) # Example Output: "#FFFFFF\n"
 
 if battery_overall_percentage <= 10 and "discharging" in battery_status:
 
