@@ -61,7 +61,7 @@ def get_blocklet_indicator(status, percentage, style):
 		return(blocklet_indicator_unknown[0])
 
 def get_blocklet_text_color(percentage):
-	elif percentage < 20:
+	if percentage < 20:
 		return("#FF0000\n")
 
 	elif percentage < 45:
