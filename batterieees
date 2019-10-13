@@ -51,7 +51,7 @@ def get_blocklet_indicator(status, percentage, style):
 			elif percentage <= 100:
 				return(blocklet_indicator_discharging[style][4])
 
-		elif "full" in status:
+		elif "full" in status and 95 <= percentage <= 100:
 			return(blocklet_indicator_full[style])
 
 		else:
