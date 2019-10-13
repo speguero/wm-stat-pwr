@@ -18,7 +18,7 @@ blocklet_indicator_nobattery = ["x", "\uf00d"] # "X" Icon
 blocklet_style               = 0 # 0 = Text-Based, 1 = Icon-Based
 blocklet_text                = ""
 pathdir_battery              = []
-pathdir_sys_battery_data     = "/sys/class/power_supply/BAT*"
+pathdir_sysfs_battery_data   = "/sys/class/power_supply/BAT*"
 
 # = FUNCTIONS =>
 
@@ -91,7 +91,7 @@ def print_blocklet_nobattery_status(style, symbol):
 
 # Searching for Batteries:
 
-for directory_path in glob.glob(pathdir_sys_battery_data):
+for directory_path in glob.glob(pathdir_sysfs_battery_data):
 	pathdir_battery.append(directory_path)
 
 if len(pathdir_battery) == 0:
@@ -117,6 +117,9 @@ else:
 			file_battery_status.close()
 
 	except:
+
+		# Print Sysfs File-Reading Error as Indicator:
+
 		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "f")
 		exit()
 
