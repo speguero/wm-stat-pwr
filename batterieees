@@ -15,7 +15,7 @@ import glob
 battery_percentage           = []
 battery_status               = []
 blocklet_indicator_nobattery = ["x", "\uf00d"] # "X" Icon
-blocklet_style               = 0 # 0 = Text-Based, 1 = Icon-Based
+blocklet_style               = 0 # 0 = Text-Based, 1 = Icon-Based (Requires Font Awesome)
 blocklet_text                = ""
 pathdir_battery              = []
 pathdir_sysfs_battery_data   = "/sys/class/power_supply/BAT*"
