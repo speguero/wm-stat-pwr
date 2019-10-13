@@ -125,10 +125,7 @@ else:
 battery_overall_percentage = int(sum(battery_percentage) / len(battery_percentage))
 blocklet_indicator         = get_blocklet_indicator(battery_status, battery_overall_percentage, blocklet_style)
 
-if blocklet_style == 1:
-	blocklet_text = "{}  {}%\n".format(blocklet_indicator, battery_overall_percentage)
-else:
-	blocklet_text = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
+blocklet_text = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
 
 print(blocklet_text)
 print(get_blocklet_text_color(battery_overall_percentage))
