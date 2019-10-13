@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+
+#   ___________________________
+#  |                           |_
+#  |   B A T T E R I E E E S   | |
+#  |   *- - - - - - - - - -*   |_|
+#  |___________________________|
+#
+# `batterieees`: A no-bull `i3blocks` battery status indicator script/blocklet that can account for one or more batteries.
+
+import glob
+
+# = VARIABLES =>
+
+battery_percentage           = []
+battery_status               = []
+blocklet_indicator_nobattery = ["x", "\uf00d"] # "X" Icon
+blocklet_style               = 0 # 0 = Text-Based, 1 = Icon-Based
+blocklet_text                = ""
+pathdir_battery              = []
+pathdir_sys_battery_data     = "/sys/class/power_supply/BAT*"
+
+# = FUNCTIONS =>
+
+def get_blocklet_indicator(status, percentage, style):
+	blocklet_indicator_full        = ["FUL", "\uf1e6"]                                           # Power Plug Icon
+	blocklet_indicator_charging    = ["CHR", "\uf0e7"]                                           # Lightning Bolt Icon
+	blocklet_indicator_discharging = ["DIS", ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]] # Battery Icons (Order: Empty to Full)
+	blocklet_indicator_unknown     = ["???", "\uf128"]                                           # Question Mark Icon
+
+	try:
+		if "charging" in status:
+			return(blocklet_indicator_charging[style])
+
+		elif "discharging" in status and style == 0:
+			return(blocklet_indicator_discharging[style])
+
+		elif "discharging" in status and style == 1:
+			if percentage <= 10:
+				return(blocklet_indicator_discharging[style][0])
+
+			elif percentage <= 35:
+				return(blocklet_indicator_discharging[style][1])
+
+			elif percentage <= 60:
+				return(blocklet_indicator_discharging[style][2])
+
+			elif percentage <= 85:
+				return(blocklet_indicator_discharging[style][3])
+
+			elif percentage <= 100:
+				return(blocklet_indicator_discharging[style][4])
+
+		elif "full" in status:
+			return(blocklet_indicator_full[style])
+
+		else:
+			return(blocklet_indicator_unknown[style])
+
+	except:
+		return(blocklet_indicator_unknown[0])
+
+def get_blocklet_text_color(percentage):
+	if percentage < 10:
+		return("#FFFFFF\n")
+
+	elif percentage < 20:
+		return("#FF0000\n")
+
+	elif percentage < 45:
+		return("#FFAE00\n")
+
+	elif percentage < 70:
+		return("#FFF600\n")
+
+	elif percentage < 95:
+		return("#A8FF00\n")
+
+	elif 95 <= percentage <= 100:
+		return("#00FF00\n")
+
+def print_blocklet_nobattery_status(style, symbol):
+	if symbol:
+		blocklet_text = "{}{}\n".format(style, symbol)
+	else:
+		blocklet_text = "{}\n".format(style)
+
+	blocklet_text_color = "#FF0000\n"
+
+	print(blocklet_text)
+	print(blocklet_text_color)
+
+# = MAIN =>
+
+# Searching for Batteries:
+
+for directory_path in glob.glob(pathdir_sys_battery_data):
+	pathdir_battery.append(directory_path)
+
+if len(pathdir_battery) == 0:
+
+	# Battery Nonexistent or Invalid System Power Supply Device Path Glob:
+
+	print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], None)
+	exit()
+
+else:
+
+	# One or More Batteries Found, Retrieve Status and Percentage of Power Remaining Per Battery:
+
+	try:
+		for battery in pathdir_battery:
+			file_battery_percentage = open("{}/capacity".format(battery), "r")
+			file_battery_status     = open("{}/status".format(battery), "r")
+
+			battery_percentage.append(int(file_battery_percentage.read().strip()))
+			battery_status.append(file_battery_status.read().strip().lower())
+
+			file_battery_percentage.close()
+			file_battery_status.close()
+
+	except:
+		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "f")
+		exit()
+
+# Determine Total Percentage of Available Power and Print Blocklet Text/Color(s):
+
+battery_overall_percentage = int(sum(battery_percentage) / len(battery_percentage))
+blocklet_indicator         = get_blocklet_indicator(battery_status, battery_overall_percentage, blocklet_style)
+
+if blocklet_style == 1:
+	blocklet_text = "{}  {}%\n".format(blocklet_indicator, battery_overall_percentage)
+else:
+	blocklet_text = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
+
+print(blocklet_text)
+print(get_blocklet_text_color(battery_overall_percentage))
+
+if battery_overall_percentage < 10:
+
+	# Display Yellow Blocklet Background Color:
+
+	exit(33)
+
+else:
+	exit()
