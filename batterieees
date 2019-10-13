@@ -61,9 +61,6 @@ def get_blocklet_indicator(status, percentage, style):
 		return(blocklet_indicator_unknown[0])
 
 def get_blocklet_text_color(percentage):
-	if percentage < 10:
-		return("#FFFFFF\n")
-
 	elif percentage < 20:
 		return("#FF0000\n")
 
@@ -136,7 +133,7 @@ else:
 print(blocklet_text)
 print(get_blocklet_text_color(battery_overall_percentage))
 
-if battery_overall_percentage < 10:
+if battery_overall_percentage <= 10:
 
 	# Display Yellow Blocklet Background Color:
 
