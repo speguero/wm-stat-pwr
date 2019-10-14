@@ -32,7 +32,7 @@ def get_blocklet_indicator(battery_status, acpower_status, percentage, style):
 	blocklet_indicator_discharging = ["DIS", ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]] # Battery Icons (Order: Empty to Full)
 	blocklet_indicator_full        = ["FUL", "\uf1e6"]                                           # Power Plug Icon
 	blocklet_indicator_pluggedin   = ["PLG", "\uf1e6"]                                           # Plug Icon
-	blocklet_indicator_unknown     = [None, None]
+	blocklet_indicator_unknown     = ["???", "\uf128"]                                           # Question Mark Icon
 
 	try:
 		if "charging" in battery_status:
