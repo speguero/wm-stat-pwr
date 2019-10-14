@@ -161,7 +161,7 @@ print(get_blocklet_text_color(battery_overall_percentage)) # Example Output: "#F
 
 if battery_overall_percentage <= 10 and "discharging" in battery_status:
 
-	# Display Yellow Blocklet Background Color:
+	# Display Yellow Background Color in Blocklet:
 
 	exit(33)
 
