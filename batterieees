@@ -9,6 +9,7 @@
 # `batterieees`: A no-bull `i3blocks` battery status indicator script/blocklet that can account for one or more batteries.
 
 import glob
+import sys
 
 # = VARIABLES =>
 
@@ -98,6 +99,12 @@ def print_blocklet_nobattery_status(style, symbol):
 
 # = MAIN =>
 
+# Ensure OS Platform Requirements Are Met:
+
+if sys.platform != "linux":
+	print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "P")
+	exit()
+
 # Determine AC Power Status (Whether Connected/Plugged In):
 
 try:
@@ -142,7 +149,7 @@ else:
 
 		# Print Sysfs File-Reading Error as Indicator:
 
-		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "f")
+		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "F")
 		exit()
 
 # Determine Total Percentage of Available Power and Print Blocklet Text/Color(s):
