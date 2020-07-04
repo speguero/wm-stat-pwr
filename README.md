@@ -16,7 +16,7 @@ Due to issues of inaccuracy as a result of the shortcomings of battery technolog
 
 __1)__ Copy `batterieees` to a directory of your choosing.
 
-__2)__ Open your `i3blocks` configuration file in a text editor and add the following configuration:
+__2)__ Edit your `i3blocks` configuration file and add the following configuration:
 
 ```
 [batterieees]
