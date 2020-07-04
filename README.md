@@ -1,7 +1,5 @@
 # i3blocks-batterieees
 
-![[Project Status: Active]](/badge/project_status.svg)
-
 `batterieees` is a battery status indicator script for the `i3blocks` status bar.
 
 Upon invocation, the script determines the overall percentage and state of one or more batteries present within a machine and presents that information to a user in a simple format.
