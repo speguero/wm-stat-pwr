@@ -4,6 +4,7 @@
 
 - [Disclaimer](#disclaimer)
 - [Install](#install)
+- [Arguments](#arguments)
 - [Runtime](#runtime)
 - [Contributing](#contributing)
 - [License](#license)
@@ -27,19 +28,28 @@ interval=1
 
 Specify the full path of `batterieees` in the `command` argument.
 
-__3)__ Refresh your i3wm session to begin using `batterieees`.
+__3)__ Refresh your i3 or Sway session to begin using `batterieees`.
+
+## Arguments
+
+Argument   | Description
+---        | ---
+[none]     | Defaults to the `text` argument.
+`text`     | Enable text-based status indicators.
+`icon`     | Enable icon-based status indicators, which require the `Font Awesome` font.
 
 ## Runtime
 
 The following power status indicators are used:
 
-Status | Meaning
----    | ---
-CHR    | Charging
-DIS    | Discharging
-FUL    | Full
-PLG    | Plugged In
-???    | Unknown
+Status (Text) | Status (Icon)  | Meaning
+---           | ---            | ---
+`CHR`         | Lightning Bolt | Charging
+`DIS`         | Battery        | Discharging
+`FUL`         | Power Plug     | Full
+`PLG`         | Power Plug     | Plugged In
+`???`         | Question Mark  | Unknown
+`X`           | X              | No Battery Present or Platform Not Supported
 
 These statuses are displayed along with the percentage of total available power in the following fashion:
 
