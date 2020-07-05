@@ -5,35 +5,16 @@
 #  |   B A T T E R I E E E S   | |
 #  |   *- - - - - - - - - -*   |_|
 #  |___________________________|
-#
-# `batterieees`: A no-bull `i3blocks` battery status indicator script/blocklet that can account for one or more batteries.
 
-import glob
-import sys
-
-# = VARIABLES =>
-
-acpower_status               = None
-battery_percentage           = []
-battery_status               = []
-blocklet_indicator_nobattery = ["x", "\uf00d"] # "X" Icon
-blocklet_style               = 0 # 0 = Text-Based, 1 = Icon-Based (Requires Font Awesome)
-blocklet_text                = ""
-file_acpower_status          = None
-file_battery_percentage      = None
-file_battery_status          = None
-pathdir_battery              = []
-pathdir_sysfs_battery_data   = "/sys/class/power_supply/BAT*"
-pathfile_sysfs_acpower_data  = "/sys/class/power_supply/AC/online"
-
-# = FUNCTIONS =>
+# = FUNC =>
 
 def get_blocklet_indicator(battery_status, acpower_status, percentage, style):
-	blocklet_indicator_charging    = ["CHR", "\uf0e7"]                                           # Lightning Bolt Icon
-	blocklet_indicator_discharging = ["DIS", ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]] # Battery Icons (Order: Empty to Full)
-	blocklet_indicator_full        = ["FUL", "\uf1e6"]                                           # Power Plug Icon
-	blocklet_indicator_pluggedin   = ["PLG", "\uf1e6"]                                           # Plug Icon
-	blocklet_indicator_unknown     = ["???", "\uf128"]                                           # Question Mark Icon
+
+	blocklet_indicator_charging    = ["CHR", "\uf0e7"]                                            # Lightning Bolt Icon
+	blocklet_indicator_discharging = ["DIS", ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]]  # Battery Icons (Order: Empty to Full)
+	blocklet_indicator_full        = ["FUL", "\uf1e6"]                                            # Power Plug Icon
+	blocklet_indicator_pluggedin   = ["PLG", "\uf1e6"]                                            # Plug Icon
+	blocklet_indicator_unknown     = ["???", "\uf128"]                                            # Question Mark Icon
 
 	try:
 		if "charging" in battery_status:
@@ -71,6 +52,7 @@ def get_blocklet_indicator(battery_status, acpower_status, percentage, style):
 		return(blocklet_indicator_unknown[0])
 
 def get_blocklet_text_color(percentage):
+
 	if percentage < 20:
 		return("#FF0000\n")
 
@@ -87,8 +69,10 @@ def get_blocklet_text_color(percentage):
 		return("#00FF00\n")
 
 def print_blocklet_nobattery_status(style, symbol):
+
 	if symbol:
 		blocklet_text = "{}{}\n".format(style, symbol)
+		
 	else:
 		blocklet_text = "{}\n".format(style)
 
@@ -97,80 +81,121 @@ def print_blocklet_nobattery_status(style, symbol):
 	print(blocklet_text)
 	print(blocklet_text_color)
 
-# = MAIN =>
+def main(blocklet_style):
 
-# Ensure OS Platform Requirements Are Met:
+	import glob
 
-if sys.platform != "linux":
-	print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "P")
-	exit()
+	# = VARS =>
 
-# Determine AC Power Status (Whether Connected/Plugged In):
+	acpower_status               = None
+	battery_percentage           = []
+	battery_status               = []
+	blocklet_indicator_nobattery = ["x", "\uf00d"]  # "X" Icon
+	blocklet_text                = ""
+	file_acpower_status          = None
+	file_battery_percentage      = None
+	file_battery_status          = None
+	pathdir_battery              = []
+	pathdir_sysfs_battery_data   = "/sys/class/power_supply/BAT*"
+	pathfile_sysfs_acpower_data  = "/sys/class/power_supply/AC/online"
 
-try:
-	file_acpower_status = open(pathfile_sysfs_acpower_data, "r")
-	acpower_status      = int(file_acpower_status.read().strip())
-	file_acpower_status.close()
+	# = MAIN =>
 
-except:
+	if blocklet_style == "text":
+		blocklet_style = 0
+	
+	elif blocklet_style == "icon":  # Requires installation of "Font Awesome" font.
+		blocklet_style = 1
+	
+	else:
+		blocklet_style = 0
 
-	# Disregard AC Power Status:
+	# Ensure OS Platform Requirements Are Met:
 
-	acpower_status = None
+	if sys.platform != "linux":
+		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "P")
+		exit()
 
-# Searching for Batteries:
-
-for directory_path in glob.glob(pathdir_sysfs_battery_data):
-	pathdir_battery.append(directory_path)
-
-if len(pathdir_battery) == 0:
-
-	# Battery Nonexistent or Invalid System Power Supply Device Path Glob:
-
-	print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], None)
-	exit()
-
-else:
-
-	# One or More Batteries Found, Retrieve Status and Percentage of Power Remaining Per Battery:
+	# Determine AC Power Status (Whether Connected/Plugged In):
 
 	try:
-		for battery in pathdir_battery:
-			file_battery_percentage = open("{}/capacity".format(battery), "r")
-			file_battery_status     = open("{}/status".format(battery), "r")
-
-			battery_percentage.append(int(file_battery_percentage.read().strip()))
-			battery_status.append(file_battery_status.read().strip().lower())
-
-			file_battery_percentage.close()
-			file_battery_status.close()
+		file_acpower_status = open(pathfile_sysfs_acpower_data, "r")
+		acpower_status      = int(file_acpower_status.read().strip())
+		file_acpower_status.close()
 
 	except:
 
-		# Print Sysfs File-Reading Error as Indicator:
+		# Disregard AC Power Status:
 
-		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "F")
+		acpower_status = None
+
+	# Searching for Batteries:
+
+	for directory_path in glob.glob(pathdir_sysfs_battery_data):
+		pathdir_battery.append(directory_path)
+
+	if len(pathdir_battery) == 0:
+
+		# Battery Nonexistent or Invalid System Power Supply Device Path Glob:
+
+		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], None)
 		exit()
 
-# Determine Total Percentage of Available Power and Print Blocklet Text/Color(s):
+	else:
 
-battery_overall_percentage = int(sum(battery_percentage) / len(battery_percentage))
-blocklet_indicator         = get_blocklet_indicator(battery_status, acpower_status, battery_overall_percentage, blocklet_style)
+		# One or More Batteries Found, Retrieve Status and Percentage of Power Remaining Per Battery:
 
-if blocklet_indicator == None:
-	blocklet_text = "{}%\n".format(battery_overall_percentage)
+		try:
+			for battery in pathdir_battery:
+				file_battery_percentage = open("{}/capacity".format(battery), "r")
+				file_battery_status     = open("{}/status".format(battery), "r")
 
-else:
-	blocklet_text = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
+				battery_percentage.append(int(file_battery_percentage.read().strip()))
+				battery_status.append(file_battery_status.read().strip().lower())
 
-print(blocklet_text)                                       # Example Output: "FUL 100%\n"
-print(get_blocklet_text_color(battery_overall_percentage)) # Example Output: "#FFFFFF\n"
+				file_battery_percentage.close()
+				file_battery_status.close()
 
-if battery_overall_percentage <= 10 and "discharging" in battery_status:
+		except:
 
-	# Display Yellow Background Color in Blocklet:
+			# Print Sysfs File-Reading Error as Indicator:
 
-	exit(33)
+			print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "F")
+			exit()
+
+	# Determine Total Percentage of Available Power and Print Blocklet Text/Color(s):
+
+	battery_overall_percentage = int(sum(battery_percentage) / len(battery_percentage))
+	blocklet_indicator         = get_blocklet_indicator(battery_status, acpower_status, battery_overall_percentage, blocklet_style)
+
+	if blocklet_indicator == None:
+		blocklet_text = "{}%\n".format(battery_overall_percentage)
+
+	else:
+		blocklet_text = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
+
+	print(blocklet_text)                                        # Example Output: "FUL 100%\n"
+	print(get_blocklet_text_color(battery_overall_percentage))  # Example Output: "#FFFFFF\n"
+
+	if battery_overall_percentage <= 10 and "discharging" in battery_status:
+
+		# Display Yellow Background Color in Blocklet:
+
+		exit(33)
+
+	else:
+		exit()
+
+if __name__ == "__main__":
+	import sys
+	
+	try:
+		blocklet_style = sys.argv[1]
+	
+	except:
+		blocklet_style = "text"
+
+	main(blocklet_style)
 
 else:
 	exit()
