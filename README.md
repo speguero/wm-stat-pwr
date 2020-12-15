@@ -1,6 +1,6 @@
 # i3blocks-batterieees
 
-`batterieees` is an `i3blocks` battery status indicator that reports a total percentage of available power based on the sum of available power in every present battery of a given laptop.
+`batterieees` is an [i3blocks](https://github.com/vivien/i3blocks) battery status indicator that reports a total percentage of available power based on the sum of available power in every present battery of a given laptop.
 
 - [Disclaimer](#disclaimer)
 - [Install](#install)
@@ -32,11 +32,11 @@ __3)__ Refresh your i3 or Sway session to begin using `batterieees`.
 
 ## Arguments
 
-Argument   | Description
----        | ---
-[none]     | Defaults to the `text` argument.
-`text`     | Enable text-based status indicators.
-`icon`     | Enable icon-based status indicators, which require the `Font Awesome` font.
+Argument | Description
+---      | ---
+[none]   | Defaults to the `-t` argument.
+`-t`     | Enable text-based status indicators.
+`-i`     | Enable icon-based status indicators, which require the **Font Awesome** font.
 
 ## Runtime
 

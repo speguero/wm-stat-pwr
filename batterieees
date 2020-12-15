@@ -8,7 +8,7 @@
 
 # = FUNC =>
 
-def get_blocklet_indicator(battery_status, acpower_status, percentage, style):
+def get_blocklet_indicator(batt_stat, ac_stat, percent, style):
 
 	blocklet_indicator_charging    = ["CHR", "\uf0e7"]                                            # Lightning Bolt Icon
 	blocklet_indicator_discharging = ["DIS", ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"]]  # Battery Icons (Order: Empty to Full)
@@ -17,32 +17,32 @@ def get_blocklet_indicator(battery_status, acpower_status, percentage, style):
 	blocklet_indicator_unknown     = ["???", "\uf128"]                                            # Question Mark Icon
 
 	try:
-		if "charging" in battery_status:
+		if "charging" in batt_stat:
 			return(blocklet_indicator_charging[style])
 
-		elif "discharging" in battery_status and style == 0:
+		elif "discharging" in batt_stat and style == 0:
 			return(blocklet_indicator_discharging[style])
 
-		elif "discharging" in battery_status and style == 1:
-			if percentage <= 10:
+		elif "discharging" in batt_stat and style == 1:
+			if percent <= 10:
 				return(blocklet_indicator_discharging[style][0])
 
-			elif percentage <= 35:
+			elif percent <= 35:
 				return(blocklet_indicator_discharging[style][1])
 
-			elif percentage <= 60:
+			elif percent <= 60:
 				return(blocklet_indicator_discharging[style][2])
 
-			elif percentage <= 85:
+			elif percent <= 85:
 				return(blocklet_indicator_discharging[style][3])
 
-			elif percentage <= 100:
+			elif percent <= 100:
 				return(blocklet_indicator_discharging[style][4])
 
-		elif "full" in battery_status and 95 <= percentage <= 100:
+		elif "full" in batt_stat and 95 <= percent <= 100:
 			return(blocklet_indicator_full[style])
 
-		elif acpower_status == True:
+		elif ac_stat == True:
 			return(blocklet_indicator_pluggedin[style])
 
 		else:
@@ -51,24 +51,24 @@ def get_blocklet_indicator(battery_status, acpower_status, percentage, style):
 	except:
 		return(blocklet_indicator_unknown[0])
 
-def get_blocklet_text_color(percentage):
+def get_blocklet_text_color(percent):
 
-	if percentage < 20:
+	if percent < 20:
 		return("#FF0000\n")
 
-	elif percentage < 45:
+	elif percent < 45:
 		return("#FFAE00\n")
 
-	elif percentage < 70:
+	elif percent < 70:
 		return("#FFF600\n")
 
-	elif percentage < 95:
+	elif percent < 95:
 		return("#A8FF00\n")
 
-	elif 95 <= percentage <= 100:
+	elif 95 <= percent <= 100:
 		return("#00FF00\n")
 
-def print_blocklet_nobattery_status(style, symbol):
+def print_blocklet_nobatt_stat(style, symbol):
 
 	if symbol:
 		blocklet_text = "{}{}\n".format(style, symbol)
@@ -87,25 +87,32 @@ def main(blocklet_style):
 
 	# = VARS =>
 
-	acpower_status               = None
-	battery_percentage           = []
-	battery_status               = []
-	blocklet_indicator_nobattery = ["x", "\uf00d"]  # "X" Icon
-	blocklet_text                = ""
-	file_acpower_status          = None
-	file_battery_percentage      = None
-	file_battery_status          = None
-	pathdir_battery              = []
-	pathdir_sysfs_battery_data   = "/sys/class/power_supply/BAT*"
-	pathfile_sysfs_acpower_data  = "/sys/class/power_supply/AC/online"
+	ac_stat                   = None
+	batt_percent              = []
+	batt_percent_totalsum     = None
+	batt_stat                 = []
+	blocklet_indicator_nobatt = ["x", "\uf00d"]  # "X" Icon
+	blocklet_text             = ""
+	linux_rfile_ac_stat       = None
+	linux_rfile_batt_percent  = None
+	linux_rfile_batt_stat     = None
+	linux_dpath_batt_data     = "/sys/class/power_supply/BAT*"
+	linux_dpath_batt_device   = []
+	linux_fpath_ac_data       = "/sys/class/power_supply/AC/online"
 
 	# = MAIN =>
 
-	if blocklet_style == "text":
+	# Text-Based Status Indicators:
+	
+	if blocklet_style == "-t":  
 		blocklet_style = 0
 	
-	elif blocklet_style == "icon":  # Requires installation of "Font Awesome" font.
+	# Icon-Based Status Indicators. Requires "Font Awesome" font:
+	
+	elif blocklet_style == "-i":  
 		blocklet_style = 1
+	
+	# Text-Based Status Indicators:
 	
 	else:
 		blocklet_style = 0
@@ -113,32 +120,32 @@ def main(blocklet_style):
 	# Ensure OS Platform Requirements Are Met:
 
 	if sys.platform != "linux":
-		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "P")
+		print_blocklet_nobatt_stat(blocklet_indicator_nobatt[blocklet_style], "P")
 		exit()
 
 	# Determine AC Power Status (Whether Connected/Plugged In):
 
 	try:
-		file_acpower_status = open(pathfile_sysfs_acpower_data, "r")
-		acpower_status      = int(file_acpower_status.read().strip())
-		file_acpower_status.close()
+		linux_rfile_ac_stat = open(linux_fpath_ac_data, "r")
+		ac_stat             = int(linux_rfile_ac_stat.read().strip())
+		linux_rfile_ac_stat.close()
 
 	except:
 
 		# Disregard AC Power Status:
 
-		acpower_status = None
+		ac_stat = None
 
 	# Searching for Batteries:
 
-	for directory_path in glob.glob(pathdir_sysfs_battery_data):
-		pathdir_battery.append(directory_path)
+	for directory_path in glob.glob(linux_dpath_batt_data):
+		linux_dpath_batt_device.append(directory_path)
 
-	if len(pathdir_battery) == 0:
+	if len(linux_dpath_batt_device) == 0:
 
 		# Battery Nonexistent or Invalid System Power Supply Device Path Glob:
 
-		print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], None)
+		print_blocklet_nobatt_stat(blocklet_indicator_nobatt[blocklet_style], None)
 		exit()
 
 	else:
@@ -146,38 +153,38 @@ def main(blocklet_style):
 		# One or More Batteries Found, Retrieve Status and Percentage of Power Remaining Per Battery:
 
 		try:
-			for battery in pathdir_battery:
-				file_battery_percentage = open("{}/capacity".format(battery), "r")
-				file_battery_status     = open("{}/status".format(battery), "r")
+			for battery in linux_dpath_batt_device:
+				linux_rfile_batt_percent = open("{}/capacity".format(battery), "r")
+				linux_rfile_batt_stat    = open("{}/status".format(battery), "r")
 
-				battery_percentage.append(int(file_battery_percentage.read().strip()))
-				battery_status.append(file_battery_status.read().strip().lower())
+				batt_percent.append(int(linux_rfile_batt_percent.read().strip()))
+				batt_stat.append(linux_rfile_batt_stat.read().strip().lower())
 
-				file_battery_percentage.close()
-				file_battery_status.close()
+				linux_rfile_batt_percent.close()
+				linux_rfile_batt_stat.close()
 
 		except:
 
 			# Print Sysfs File-Reading Error as Indicator:
 
-			print_blocklet_nobattery_status(blocklet_indicator_nobattery[blocklet_style], "F")
+			print_blocklet_nobatt_stat(blocklet_indicator_nobatt[blocklet_style], "F")
 			exit()
 
 	# Determine Total Percentage of Available Power and Print Blocklet Text/Color(s):
 
-	battery_overall_percentage = int(sum(battery_percentage) / len(battery_percentage))
-	blocklet_indicator         = get_blocklet_indicator(battery_status, acpower_status, battery_overall_percentage, blocklet_style)
+	batt_percent_totalsum = int(sum(batt_percent) / len(batt_percent))
+	blocklet_indicator    = get_blocklet_indicator(batt_stat, ac_stat, batt_percent_totalsum, blocklet_style)
 
 	if blocklet_indicator == None:
-		blocklet_text = "{}%\n".format(battery_overall_percentage)
+		blocklet_text = "{}%\n".format(batt_percent_totalsum)
 
 	else:
-		blocklet_text = "{} {}%\n".format(blocklet_indicator, battery_overall_percentage)
+		blocklet_text = "{} {}%\n".format(blocklet_indicator, batt_percent_totalsum)
 
-	print(blocklet_text)                                        # Example Output: "FUL 100%\n"
-	print(get_blocklet_text_color(battery_overall_percentage))  # Example Output: "#FFFFFF\n"
+	print(blocklet_text)                                   # Example Output: "FUL 100%\n"
+	print(get_blocklet_text_color(batt_percent_totalsum))  # Example Output: "#FFFFFF\n"
 
-	if battery_overall_percentage <= 10 and "discharging" in battery_status:
+	if batt_percent_totalsum <= 10 and "discharging" in batt_stat:
 
 		# Display Yellow Background Color in Blocklet:
 
@@ -193,7 +200,7 @@ if __name__ == "__main__":
 		blocklet_style = sys.argv[1]
 	
 	except:
-		blocklet_style = "text"
+		blocklet_style = "-t"
 
 	main(blocklet_style)
 
