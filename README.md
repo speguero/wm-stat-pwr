@@ -14,8 +14,9 @@
 
 ## Requirements
 
-- Linux
-- OpenBSD
+- Linux, or...
+- OpenBSD, or...
+- FreeBSD, with...
 - Python v3.5+
 
 ## Disclaimer
@@ -57,9 +58,11 @@ Status (Text) | Status (Icon)  | Meaning
 `DIS`         | Battery        | Discharging
 `FUL`         | Power Plug     | Full
 `PLG`         | Power Plug     | Plugged In
-`???`         | Question Mark  | Unknown, No Battery Present or Platform Not Supported
+`NBF`         | [none]         | No Battery Found
+`PNS`         | [none]         | Platform Not Supported
+`???`         | [none]         | Unknown
 
-These statuses are displayed along with the percentage of total available power in the following fashion:
+If one or more batteries are present, one of the first four status indicators will be displayed along with a power percentage:
 
 ```
 CHR 84%
