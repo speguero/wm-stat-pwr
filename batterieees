@@ -111,7 +111,15 @@ def get_batt_percent():
 
 	# Determines percentage of battery life or total
 	# sum of life between all present batteries.
-	
+	# 
+	# NOTICE: In the event when a supported platform
+	#         is detected and `batt_percent` does not
+	#         feature an expected integer, a value of
+	#         -1 will be provided in place of the `False`
+	#         booloan, as 0 and `False` are identical
+	#         in Python. With a battery life percentage
+	#         of 0%, misreporting will otherwise occur.
+
 	os = platform.system().lower()
 
 	if os == 'linux':
@@ -136,12 +144,12 @@ def get_batt_percent():
 				batt_percent_totalsum = int(sum(batt_percent) / len(batt_percent))
 				batt_percent          = batt_percent_totalsum
 
-				if -1 < batt_percent < 101:
+				if 0 <= batt_percent <= 100:
 					return batt_percent
 				else:
 					raise
 		except:
-			batt_percent = False
+			batt_percent = -1
 			return batt_percent
 	
 	if os == 'openbsd' or os == 'freebsd':
@@ -158,7 +166,7 @@ def get_batt_percent():
 			else:
 				raise
 		except:
-			batt_percent = False
+			batt_percent = -1
 			return batt_percent
 	
 	batt_percent = None
@@ -255,7 +263,7 @@ def get_block_output_pwr_stat(batt_stat, ac_stat, batt_percent, style):
 		if batt_stat == None or batt_percent == None:
 			return [block_indicator_pns, False]
 
-		elif batt_stat == False or batt_percent == False:
+		elif batt_stat == False or batt_percent == -1:
 			return [block_indicator_nbf, False]
 
 		elif ac_stat == True and batt_stat == True and 95 <= batt_percent <= 100:
@@ -300,7 +308,7 @@ def get_block_fg_color(batt_percent):
 	# indicates range of available battery life.
 
 	try:
-		if batt_percent == False or batt_percent == None:
+		if batt_percent == -1 or batt_percent == None:
 			raise
 
 		if 0 <= batt_percent < 20:
