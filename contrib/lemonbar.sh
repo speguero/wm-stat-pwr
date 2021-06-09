@@ -1,17 +1,17 @@
 #!/bin/sh
 
-# Provides de-facto baterio support for lemonbar (https://github.com/lemonboy/bar).
+# Provides de-facto wmbattstat support for lemonbar (https://github.com/lemonboy/bar).
 #
 # To test, run the following in a shell:
 # 
 # `sh lemonbar.sh | lemonbar`
 #
 # Copy the function found below over to your own lemonbar config, change the path
-# of baterio to wherever you have it stored, and enjoy.
+# of wmbattstat to wherever you have it stored, and enjoy.
 
-baterio()
+wmbattstat()
 {
-	script_file="$(../baterio)"
+	script_file="$(../wmbattstat)"
 	output_text="$(echo $script_file | awk -F ' ' '{ print $1 " " $2 }')"
 	output_color="$(echo $script_file | awk -F ' ' '{ print $3 }')"
 
@@ -20,7 +20,7 @@ baterio()
 
 while true
 do
-	baterio
+	wmbattstat
 	sleep 1
 done
 
