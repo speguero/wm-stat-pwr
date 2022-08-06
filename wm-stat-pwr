@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
 '''
-   _________________________
-  |                         |_
-  |   W M B A T T S T A T   | |
-  |   *- - - - - - - - -*   |_|
-  |_________________________|
+   ___________________________
+  |                           |_
+  |   W M - S T A T - P W R   | |
+  |   *- - - - - - - - - -*   |_|
+  |___________________________|
 
 '''
 
@@ -312,19 +312,19 @@ def get_block_fg_color(batt_percent):
 			raise
 
 		if 0 <= batt_percent < 20:
-			return '#FF0000\n'
+			return '#FF0000'
 
 		elif batt_percent < 45:
-			return '#FFAE00\n'
+			return '#FFAE00'
 
 		elif batt_percent < 70:
-			return '#FFF600\n'
+			return '#FFF600'
 
 		elif batt_percent < 95:
-			return '#A8FF00\n'
+			return '#A8FF00'
 
 		elif 95 <= batt_percent <= 100:
-			return '#00FF00\n'
+			return '#00FF00'
 
 		else:
 			raise

@@ -1,6 +1,6 @@
-# wmbattstat
+# wm-stat-pwr
 
-`wmbattstat` is an [`i3blocks`](https://github.com/vivien/i3blocks) status indicator that reports a percentage of available battery power on your machine, based upon a single battery or a total sum of available power between all present batteries.
+`wm-stat-pwr` is an [`i3blocks`](https://github.com/vivien/i3blocks) status indicator that reports a percentage of available battery power on your machine, based upon a single battery or a total sum of available power between all present batteries.
 
 ---
 
@@ -21,22 +21,22 @@
 
 ## Disclaimer
 
-Due to the nature of battery technology and issues of inaccuracy from estimated times of remaining life before loss of power, `wmbattstat` does not, and will never, report such information.
+Due to the nature of battery technology and issues of inaccuracy from estimated times of remaining life before loss of power, `wm-stat-pwr` does not, and will never, report such information.
 
 ## Install
 
-__1)__ Copy `wmbattstat` to a directory of your choosing.
+__1)__ Copy `wm-stat-pwr` to a directory of your choosing.
 
 __2)__ Edit your `i3blocks` configuration file and add the following configuration:
 
 ```ini
-[wmbattstat]
-command=/path/to/wmbattstat
+[wm-stat-pwr]
+command=/path/to/wm-stat-pwr
 label=B
 interval=1
 ```
 
-Specify the full path of `wmbattstat` in the `command` argument.
+Specify the full path of `wm-stat-pwr` in the `command` argument.
 
 __3)__ Refresh your i3 or Sway session and enjoy.
 
